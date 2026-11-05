@@ -1,0 +1,27 @@
+services:
+  superset:
+    image: apache/superset:latest
+    container_name: qeema-superset
+    restart: unless-stopped
+    environment:
+      SUPERSET_SECRET_KEY: "qeema_nyc_mobility_secret_key_change_later_2026"
+      SUPERSET_LOAD_EXAMPLES: "no"
+    ports:
+      - "8088:8088"
+    volumes:
+      - superset_home:/app/superset_home
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      (superset fab create-admin
+      --username admin
+      --firstname Admin
+      --lastname User
+      --email admin@superset.com
+      --password admin || true) &&
+      superset init &&
+      /usr/bin/run-server.sh
+      "
+
+volumes:
+  superset_home:
